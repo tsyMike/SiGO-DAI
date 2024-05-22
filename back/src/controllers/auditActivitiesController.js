@@ -9,7 +9,7 @@ export class AuditActivitiesController {
 
   getActivityById = async (req, res) => {
     const { id } = req.params;
-    const activity = await this.auditActivitiesModel.getActivityById(id);
+    const activity = await this.auditActivitiesModel.getActivityById({ id });
     if (!activity) {
       return res.status(404).json({ error: "Actividad no encontrada" });
     }
@@ -18,19 +18,19 @@ export class AuditActivitiesController {
 
   createActivity = async (req, res) => {
     const activity = req.body;
-    const id = await this.auditActivitiesModel.createActivity(activity);
+    const id = await this.auditActivitiesModel.createActivity({ activity });
     res.status(201).json({ id });
   };
 
   updateActivity = async (req, res) => {
     const { id } = req.params;
     const activity = req.body;
-    await this.auditActivitiesModel.updateActivity(id, activity);
+    await this.auditActivitiesModel.updateActivity({ id, activity });
     res.status(204).end();
   };
 
   deleteActivity = async (req, res) => {
-    await this.auditActivitiesModel.deleteActivity(id);
+    await this.auditActivitiesModel.deleteActivity({ id });
     res.status(204).end();
   };
 }

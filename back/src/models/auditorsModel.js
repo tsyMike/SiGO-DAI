@@ -1,5 +1,6 @@
 // src/models/auditActivityModel.js
 import db from "../config/db.js";
+import { uuidResult } from "../utils/generateUUID.js";
 export class AuditorsModel {
   static async getAllAuditors() {
     const [rows] = await db.query(
@@ -28,8 +29,8 @@ export class AuditorsModel {
       anualRemuneration,
     } = auditor;
     const userInfo = name[0] + lastName;
-    const [uuidResult] = await db.query("SELECT UUID() uuid;");
-    const [{ uuid }] = uuidResult;
+
+    const [{ uuid }] = await uuidResult.generate();
 
     const [result1] = await db.query(
       "INSERT INTO users (id_user, type, name, last_name, username, password) VALUES (UUID_TO_BIN(?),?,?,?,?,?);",
