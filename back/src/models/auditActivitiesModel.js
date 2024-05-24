@@ -35,7 +35,8 @@ export class AuditActivitiesModel {
     const [{ uuid }] = await uuidResult.generate();
 
     const result = await db.query(
-      "INSERT INTO audit_activities (id_activity, objective, risk_description, activity_name, estimated_time, scope, starting_date, ending_date, activity_type, finished, programmed, unit_reference) VALUES(UUID_TO_BIN(?),?,?,?,?,?,?,?,?,?,?,UUID_TO_BIN(?))",
+      "INSERT INTO audit_activities (id_activity, objective, risk_description, activity_name, estimated_time, scope, starting_date, ending_date, activity_type, finished, programmed, unit_reference)" +
+        " VALUES(UUID_TO_BIN(?),?,?,?,?,?,?,?,?,?,?,UUID_TO_BIN(?))",
       [
         uuid,
         objective,

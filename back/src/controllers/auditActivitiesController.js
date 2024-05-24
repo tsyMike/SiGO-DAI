@@ -30,6 +30,7 @@ export class AuditActivitiesController {
   };
 
   deleteActivity = async (req, res) => {
+    const { id } = req.params;
     await this.auditActivitiesModel.deleteActivity({ id });
     res.status(204).end();
   };

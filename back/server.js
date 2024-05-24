@@ -11,6 +11,8 @@ import { AuditedUnitsModel } from "./src/models/auditedUnitsModel.js";
 import { ActivityTypesModel } from "./src/models/activityTypesModel.js";
 
 import cors from "cors";
+import { createMemoradumRouter } from "./src/routes/memoradumsRoutes.js";
+import { MemorandumsModel } from "./src/models/memorandumsModel.js";
 
 const app = express();
 const corsOptions = {
@@ -44,6 +46,8 @@ app.use(
 );
 
 app.use("/api", createAuditorsRouter({ auditorsModel: AuditorsModel }));
+
+app.use("/api", createMemoradumRouter({ memoradumsModel: MemorandumsModel }));
 
 app.listen(3003, () => {
   console.log("Server is running on port 3003");

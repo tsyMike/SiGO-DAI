@@ -8,13 +8,22 @@ export const createAuditActivityRouter = ({ auditActivitiesModel }) => {
     auditActivitiesModel,
   });
 
-  auditActivitiesRouter.get("/audit-activities", auditActivitiesController.getAllActivities);
+  auditActivitiesRouter.get(
+    "/audit-activities",
+    auditActivitiesController.getAllActivities
+  );
   auditActivitiesRouter.get(
     "/audit-activities/:id",
     auditActivitiesController.getActivityById
   );
-  auditActivitiesRouter.post("/audit-activities", auditActivitiesController.createActivity);
-  auditActivitiesRouter.put("/audit-activities/:id", auditActivitiesController.updateActivity);
+  auditActivitiesRouter.post(
+    "/audit-activities",
+    auditActivitiesController.createActivity
+  );
+  auditActivitiesRouter.put(
+    "/audit-activities/:id",
+    auditActivitiesController.updateActivity
+  );
   auditActivitiesRouter.delete(
     "/audit-activities/:id",
     auditActivitiesController.deleteActivity

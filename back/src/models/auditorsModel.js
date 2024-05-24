@@ -70,7 +70,8 @@ export class AuditorsModel {
     } = modifiedAuditor;
     const newUsername = name[0] + lastName;
     await db.query(
-      "UPDATE users SET name = ?, last_name = ?, username = ? WHERE id_user = UUID_TO_BIN(?)",
+      "UPDATE users SET name = ?, last_name = ?, username = ? " +
+        "WHERE id_user = UUID_TO_BIN(?)",
       [name, lastName, newUsername.toLowerCase(), id]
     );
     await db.query(
