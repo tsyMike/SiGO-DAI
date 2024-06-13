@@ -4,7 +4,9 @@ import { uuidResult } from "../utils/generateUUID.js";
 export class AuditorsModel {
   static async getAllAuditors() {
     const [rows] = await db.query(
-      "SELECT BIN_TO_UUID(u.id_user) id_user, u.name, u.last_name, u.username FROM users u, auditors a WHERE a.ci = id_user"
+      "SELECT BIN_TO_UUID(u.id_user) id_user, u.name, u.last_name, u.username, a.profession, a.public_years_xp, a.private_years_xp, a.incorporation_date, a.anual_remuneration " +
+        " FROM users u, auditors a " +
+        " WHERE a.ci = id_user"
     );
     return rows;
   }
@@ -33,7 +35,8 @@ export class AuditorsModel {
     const [{ uuid }] = await uuidResult.generate();
 
     const [result1] = await db.query(
-      "INSERT INTO users (id_user, type, name, last_name, username, password) VALUES (UUID_TO_BIN(?),?,?,?,?,?);",
+      "INSERT INTO users (id_user, type, name, last_name, username, password) " +
+        "VALUES (UUID_TO_BIN(?),?,?,?,?,?);",
       [
         uuid,
         "user",

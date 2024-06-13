@@ -10,7 +10,10 @@ export const createAuditedUnitsRouter = ({ auditedUnitsModel }) => {
     "/audited-units",
     auditedUnitsController.getAllAuditedUnits
   );
-  // auditedUnitsRouter.get("/audited-units/:id", auditedUnitsController.algo);
+  auditedUnitsRouter.get(
+    "/audited-units/:id",
+    auditedUnitsController.getAuditedUnitById
+  );
   // auditedUnitsRouter.post("/audited-units", auditedUnitsController.algo);
   // auditedUnitsRouter.put("/audited-units/:id", auditedUnitsController.algo);
   // auditedUnitsRouter.delete("/audited-units", auditedUnitsController.algo);

@@ -1,11 +1,16 @@
-// src/api/axiosConfig.js
 import axios from 'axios';
 
-const instance = axios.create({
-  baseURL: 'http://localhost:3003/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:3003/api",
+  withCredentials: true,
 });
 
-export default instance;
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default axiosInstance;

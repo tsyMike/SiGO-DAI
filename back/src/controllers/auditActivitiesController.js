@@ -23,9 +23,9 @@ export class AuditActivitiesController {
   };
 
   updateActivity = async (req, res) => {
-    const { id } = req.params;
-    const activity = req.body;
-    await this.auditActivitiesModel.updateActivity({ id, activity });
+    const {id} = req.params;
+    const modifiedActivity = req.body;
+    await this.auditActivitiesModel.updateActivity({ id, modifiedActivity });
     res.status(204).end();
   };
 

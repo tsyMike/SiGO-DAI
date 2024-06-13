@@ -13,7 +13,7 @@ const DataTableWithFilter = ({ title, activities, columns, expandableRowsCompone
         activities.filter((e) =>
           e.activity_name
             .toLowerCase()
-            .includes(filterField.toLowerCase() || "")
+            .includes(filterField.toLowerCase())
         )
       );
     }

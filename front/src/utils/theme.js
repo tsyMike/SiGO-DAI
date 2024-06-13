@@ -1,25 +1,37 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
   components: {
     MuiTextField: {
       defaultProps: {
-        variant: 'outlined',
+        color: "secondary",
+        variant: "outlined",
         fullWidth: true,
-        margin: 'normal',
+        size: "small",
       },
     },
     MuiSelect: {
       defaultProps: {
-        variant: 'outlined',
+        variant: "outlined",
         fullWidth: true,
-        margin: 'normal',
+        size: "small",
       },
     },
     MuiFormControl: {
       defaultProps: {
+        size: "small",
         fullWidth: true,
-        margin: 'normal',
+      },
+    },
+    MuiInputLabel: {
+      defaultProps: {
+        size: "small",
+        fullWidth: true,
+      },
+    },
+    MuiMenuItem: {
+      defaultProps: {
+        fullWidth: true,
       },
     },
   },

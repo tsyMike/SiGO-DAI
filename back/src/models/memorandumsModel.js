@@ -5,17 +5,38 @@ export class MemorandumsModel {
     const [rows] = await db.query(
       "SELECT BIN_TO_UUID(m.id_memo) id_memo, BIN_TO_UUID(m.assigned_activity) assigned_activity, d.description, d.title, d.correlative, d.issue_date, d.correlative, d.link " +
         "FROM memorandums m, docs d" +
-        " WHERE m.id_memo = id_doc"
+        " WHERE m.id_memo = d.id_doc"
     );
     return rows;
   }
-  static async getMemorandumById() {
+  static async getMemorandumById({ id }) {
     const [rows] = await db.query(
-      "SELECT BIN_TO_UUID(m.id_memo), m.assigned_activity, d.description, d.title, d.correlative, d.issue_date, d.correlative, d.link " +
+      "SELECT BIN_TO_UUID(m.id_memo) id_memo, BIN_TO_UUID(m.assigned_activity) assigned_activity, d.description, d.title, d.correlative, d.issue_date, d.correlative, d.link " +
         "FROM memorandums m, docs d" +
-        " WHERE m.id_memo = id_doc"
+        " WHERE m.id_memo = d.id_doc AND m.id_memo = UUID_TO_BIN(?)",
+      [id]
     );
     return rows && rows.length ? rows[0] : [];
+  }
+  static async getMemorandumByActivity({ id_activity }) {
+    const [rows] = await db.query(
+      "SELECT BIN_TO_UUID(m.id_memo) id_memo, BIN_TO_UUID(m.assigned_activity) assigned_activity, d.description, d.title, d.correlative, d.issue_date, d.correlative, d.link " +
+        "FROM memorandums m, docs d" +
+        " WHERE m.id_memo = d.id_doc AND m.assigned_activity = UUID_TO_BIN(?)",
+      [id_activity]
+    );
+    return rows && rows.length ? rows[0] : [];
+  }
+  static async getMemorandumsByAuditor({ id }) {
+    const [rows] = await db.query(
+      "SELECT BIN_TO_UUID(m.id_memo) id_memo, BIN_TO_UUID(m.assigned_activity) assigned_activity, d.description, d.title, d.correlative, d.issue_date, d.correlative, d.link" +
+        " FROM memorandums m, docs d, assigned_memos am" +
+        " WHERE m.id_memo = d.id_doc" +
+        " AND m.id_memo = am.id_memo" +
+        " AND am.ci = UUID_TO_BIN(?)",
+      [id]
+    );
+    return rows ? rows : [];
   }
   static async createMemoradum({ memorandum }) {
     const [{ uuid }] = await uuidResult.generate();
@@ -26,7 +47,7 @@ export class MemorandumsModel {
       issueDate,
       link,
       limitDate,
-      assignedActivity, // binary fk from audit_activities
+      assignedActivity,
     } = memorandum;
     const result1 = await db.query(
       "INSERT INTO docs (id_doc, description,title, correlative, issue_date, link) " +
@@ -43,7 +64,7 @@ export class MemorandumsModel {
     const { title, correlative, issueDate, link, limitDate, assignedActivity } =
       modifiedMemmo;
     await db.query(
-      "UPDATE doc SET title = ?, correlative = ?, issue_date = ?, link = ? " +
+      "UPDATE docs SET title = ?, correlative = ?, issue_date = ?, link = ? " +
         "WHERE id_doc = UUID_TO_BIN(?)",
       [title, correlative, issueDate, link, id]
     );
@@ -52,7 +73,7 @@ export class MemorandumsModel {
         "WHERE id_memo = UUID_TO_BIN(?)"
     );
   }
-  static async deleteMemoradum({ id }) {
-    await db.query("DELETE FROM id_doc WHERE id_doc = UUID_TO_BIN(?)", [id]);
+  static async deleteMemorandum({ id }) {
+    await db.query("DELETE FROM docs WHERE id_doc = UUID_TO_BIN(?)", [id]);
   }
 }
