@@ -6,7 +6,7 @@ import axios from "../../api/axiosConfig";
 import { auditorGetActivitiesFormat } from "../../utils/columns";
 import { ActivityInfo } from "../../components/expandableRowsComponents";
 
-export const AssignedActivities = () => {
+export const AssignedActivitiesManagement = () => {
   const [assignedActivities, setAssignedActivities] = useState([]);
   const { user } = useAuth();
   const { id_user } = user;

@@ -94,7 +94,6 @@ export class AuditActivitiesModel {
   }
 
   static async deleteActivity({ id }) {
-    console.log(id);
     await db.query(
       "DELETE FROM audit_activities WHERE id_activity = UUID_TO_BIN(?)",
       [id]

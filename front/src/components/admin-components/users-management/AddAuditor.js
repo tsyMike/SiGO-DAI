@@ -1,11 +1,26 @@
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { Button, Grid, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import axios from "../../../api/axiosConfig";
+import { daiChart } from "../../../utils/env";
 
-export const AddAuditor = () => {
+export const AddAuditor = ({ idUser, daiCharge }) => {
+  const [activeAuditors, setActiveAuditors] = useState([]);
+  useEffect(() => {
+    const fetchActiveAuditors = async () => {
+      try {
+        const response = await axios.get("/active-auditors");
+        const { data } = response;
+        setActiveAuditors(daiChart.filter((e) => !data.includes(e)));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchActiveAuditors();
+  }, [activeAuditors]);
   const [auditor, setAuditor] = useState({
+    idUser: idUser,
     name: "",
-    lastName: "",
+    lastName: daiCharge,
     profession: "",
     publicYearsXP: "",
     privateYearsXP: "",
@@ -22,10 +37,11 @@ export const AddAuditor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/auditors", auditor);
+      await axios.put("/auditors/assign/" + idUser, auditor);
       setAuditor({
+        idUser: idUser,
         name: "",
-        lastName: "",
+        lastName: daiCharge,
         profession: "",
         publicYearsXP: "",
         privateYearsXP: "",
@@ -36,109 +52,94 @@ export const AddAuditor = () => {
       console.error(error);
     }
   };
-  const textFieldProps = {
-    required: true,
-    fullWidth: true,
-    size: "small",
-  };
   return (
-    <Container
-      sx={{
-        borderRadius: "15px",
-        width: "75vw",
-        marginX: "auto",
-        marginY: "5%",
-        bgcolor: "white",
-        padding: "15px",
-      }}
-    >
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography id="modal-title" variant="h6">
-              Registrar un auditor
-            </Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Apellido"
-              name="lastName"
-              value={auditor.lastName}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Nombre"
-              name="name"
-              value={auditor.name}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Profesión"
-              name="profession"
-              value={auditor.profession}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h8">Experiencia</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Área pública"
-              name="publicYearsXP"
-              type="number"
-              value={auditor.publicYearsXP}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Área privada"
-              name="privateYearsXP"
-              type="number"
-              value={auditor.privateYearsXP}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              label="Fecha de incorporación"
-              name="incorporationDate"
-              type="date"
-              value={auditor.incorporationDate}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Remuneración anual"
-              name="anualRemuneration"
-              type="number"
-              value={auditor.anualRemuneration}
-              onChange={handleChange}
-              {...textFieldProps}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Button type="submit" variant="contained" color="secondary">
-              Registrar auditor
-            </Button>
-          </Grid>
+    <form onSubmit={handleSubmit}>
+      <Grid sx={{ paddingY: "15px" }} container spacing={2}>
+        <Grid item xs={4}>
+          Registrar a <strong>{daiCharge}</strong>
         </Grid>
-      </form>
-    </Container>
+        <Grid item xs={4}>
+          <TextField
+            label="Nombre Completo"
+            name="name"
+            value={auditor.name}
+            onChange={handleChange}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TextField
+            label="Profesión"
+            name="profession"
+            value={auditor.profession}
+            onChange={handleChange}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <strong>Experiencia</strong>
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="Área pública"
+            name="publicYearsXP"
+            type="number"
+            value={auditor.publicYearsXP}
+            onChange={handleChange}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="Área privada"
+            name="privateYearsXP"
+            type="number"
+            value={auditor.privateYearsXP}
+            onChange={handleChange}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="Fecha de incorporación"
+            name="incorporationDate"
+            type="date"
+            value={auditor.incorporationDate}
+            onChange={handleChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="Remuneración anual"
+            name="anualRemuneration"
+            type="number"
+            value={auditor.anualRemuneration}
+            onChange={handleChange}
+            required={true}
+            fullWidth={true}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" color="secondary">
+            Registrar {daiCharge}
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
   );
 };

@@ -6,6 +6,10 @@ export class AuditorsController {
     const auditors = await this.auditorsModel.getAllAuditors();
     res.status(200).json(auditors);
   };
+  getNoActiveAuditorsParam = async (req, res) => {
+    const auditors = await this.auditorsModel.getNoActiveAuditorsParam();
+    res.status(200).json(auditors);
+  };
 
   getAuditorById = async (req, res) => {
     const { id } = req.params;
@@ -26,6 +30,12 @@ export class AuditorsController {
     const { id } = req.params;
     const modifiedAuditor = req.body;
     await this.auditorsModel.updateAuditor({ id, modifiedAuditor });
+    res.status(204).end();
+  };
+  assignAuditor = async (req, res) => {
+    const { id } = req.params;
+    const newAuditor = req.body;
+    await this.auditorsModel.assignAuditor({ id, newAuditor });
     res.status(204).end();
   };
 

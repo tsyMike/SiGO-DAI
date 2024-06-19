@@ -3,7 +3,7 @@ import { uuidResult } from "../utils/generateUUID.js";
 export class ReportsModel {
   static async getAllReports() {
     const [rows] = await db.query(
-      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, d.description, d.title, d.issue_date, d.link, d.correlative " +
+      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, r.auditable, d.description, d.title, d.issue_date, d.link, d.correlative " +
         " FROM docs d, reports r" +
         " WHERE d.id_doc = r.id_doc"
     );
@@ -11,7 +11,7 @@ export class ReportsModel {
   }
   static async getReportById({ id }) {
     const [rows] = await db.query(
-      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, d.description, d.title, d.issue_date, d.link, d.correlative " +
+      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, r.auditable, d.description, d.title, d.issue_date, d.link, d.correlative " +
         " FROM docs d, reports r" +
         " WHERE d.id_doc = UUID_TO_BIN(?)",
       [id]
@@ -20,10 +20,18 @@ export class ReportsModel {
   }
   static async getReportsByActivity({ id }) {
     const [rows] = await db.query(
-      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, d.description, d.title, d.issue_date, d.link, d.correlative " +
+      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.id_report_type, r.auditable, d.description, d.title, d.issue_date, d.link, d.correlative " +
         " FROM docs d, reports r" +
         " WHERE r.id_activity = UUID_TO_BIN(?) and r.id_doc = d.id_doc",
       [id]
+    );
+    return rows || [];
+  }
+  static async getAuditableReports() {
+    const [rows] = await db.query(
+      "SELECT BIN_TO_UUID(r.id_doc) id_report, BIN_TO_UUID(r.id_activity) id_activity, r.auditable, d.correlative" +
+        " FROM docs d, reports r" +
+        " WHERE r.auditable = 1 AND r.id_doc = d.id_doc"
     );
     return rows || [];
   }

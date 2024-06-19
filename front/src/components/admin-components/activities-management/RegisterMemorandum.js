@@ -15,6 +15,7 @@ import {
   Grid,
 } from "@mui/material";
 import axios from "../../../api/axiosConfig";
+import { updatedFormattedDate } from "../../../utils/formatDate";
 
 const RegisterMemorandum = ({ id_activity }) => {
   const [auditors, setAuditors] = useState([]);
@@ -86,9 +87,23 @@ const RegisterMemorandum = ({ id_activity }) => {
               ci: e,
               assignedDate: todayDate,
             });
+            try {
+              const response = await axios.get(
+                "/audit-activities/" + id_activity
+              );
+              const { starting_date, ending_date } = response.data;
+              await axios.put("/audit-activities/" + id_activity, {
+                ...response.data,
+                starting_date: updatedFormattedDate(starting_date),
+                ending_date: updatedFormattedDate(ending_date),
+                finished: 0,
+              });
+            } catch (error) {
+              console.error(error);
+            }
           } catch (error) {
             console.error(error);
-          }          
+          }
         }
       } catch (error) {
         console.error("Failed to register assignedMemo");

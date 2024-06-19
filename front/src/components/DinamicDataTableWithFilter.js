@@ -16,19 +16,20 @@ const DinamicDataTableWithFilter = (params) => {
   const [filterField, setFilterField] = useState("");
 
   useEffect(() => {
+    const newData = data.map((e) =>
+      e[filterParam] === null ? { ...e, [filterParam]: "" } : { ...e }
+    );
     if (data && data.length !== 0) {
       setFilteredData(
-        data.filter((e) =>
+        newData.filter((e) =>
           e[filterParam]?.toLowerCase().includes(filterField.toLowerCase())
         )
       );
     }
   }, [data, filteredData, filterField, filterParam]);
-
   return (
     <Stack
       sx={{
-        margin: "15px",
         padding: "15px",
         borderColor: "black",
         borderStyle: "solid",

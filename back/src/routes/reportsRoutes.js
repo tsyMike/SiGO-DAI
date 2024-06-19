@@ -9,7 +9,8 @@ export const createReportsRouter = ({ reportsModel }) => {
   });
 
   reportsRouter.get("/reports", reportsController.getAllReports);
-  reportsRouter.get("/reports/:id", reportsController.getReportById);
+  reportsRouter.get("/reports/id/:id", reportsController.getReportById);
+  reportsRouter.get("/reports/auditable", reportsController.getAuditableReports);
   reportsRouter.get(
     "/reports/activity/:id",
     reportsController.getReportsByActivity

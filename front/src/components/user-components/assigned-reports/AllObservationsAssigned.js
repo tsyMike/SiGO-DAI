@@ -18,95 +18,88 @@ export const AllObservationsAssigned = ({ idReport }) => {
     };
     fetchObservations();
   }, [idReport, assignedObservations]);
-  const handleSubmit = async () => {};
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Grid container sx={{ margin: "15px" }}>
-          {assignedObservations.length !== 0 ? (
-            <>
-              {assignedObservations.map((e, index) => {
-                return (
+      <Grid container sx={{ margin: "15px" }}>
+        {assignedObservations.length !== 0 ? (
+          <>
+            {assignedObservations.map((e, index) => {
+              return (
+                <Grid
+                  key={index + "-grid-container"}
+                  item
+                  container
+                  spacing={2}
+                  sx={{
+                    marginY: "15px",
+                    borderBottomStyle: "dashed",
+                    borderTopStyle: "dashed",
+                    borderTopWidth: ".1px",
+                    borderBottomWidth: ".1px",
+                  }}
+                >
+                  <Grid key={index + "-num-" + e.numeral} item xs={2}>
+                    {e.numeral}
+                  </Grid>
                   <Grid
-                    key={index + "-grid-container"}
+                    key={index + "-num-detailed-" + e.numeral}
                     item
                     container
-                    spacing={2}
-                    sx={{
-                      marginY: "15px",
-                      borderBottomStyle: "dashed",
-                      borderTopStyle: "dashed",
-                      borderTopWidth: ".1px",
-                      borderBottomWidth: ".1px",
-                    }}
+                    xs={10}
                   >
-                    <Grid key={index + "-num-" + e.numeral} item xs={2}>
-                      {e.numeral}
+                    <Grid key={index + "-desc-" + e.description} item xs={12}>
+                      <strong>Observación: </strong>
+                      {e.description}
                     </Grid>
                     <Grid
-                      key={index + "-num-detailed-" + e.numeral}
+                      key={index + "-condition-" + e.condittion}
                       item
-                      container
-                      xs={10}
+                      xs={6}
                     >
-                      <Grid key={index + "-desc-" + e.description} item xs={12}>
-                        <strong>Observación: </strong>
-                        {e.description}
-                      </Grid>
-                      <Grid
-                        key={index + "-condition-" + e.condittion}
-                        item
-                        xs={6}
-                      >
-                        <strong>Condición: </strong>
-                        {e.condittion}
-                      </Grid>
-                      <Grid
-                        key={index + "-criterion-" + e.criterion}
-                        item
-                        xs={6}
-                      >
-                        <strong>Criterio:</strong>
-                        {e.criterion}
-                      </Grid>
-                      <Grid key={index + "-cause-" + e.cause} item xs={6}>
-                        <strong>Causa: </strong>
-                        {e.cause}
-                      </Grid>
-                      <Grid key={index + "-effect-" + e.effect} item xs={6}>
-                        <strong>Efecto: </strong>
-                        {e.effect}
-                      </Grid>
+                      <strong>Condición: </strong>
+                      {e.condittion}
                     </Grid>
-                    <Grid item xs={12}>
-                      <Button
-                        onClick={async () => {
-                          try {
-                            await axios.delete(
-                              "/observations/" + e.id_observation
-                            );
-                          } catch (error) {
-                            console.error(error);
-                          }
-                        }}
-                        variant="contained"
-                        size="small"
-                        color="error"
-                        fullWidth
-                      >
-                        Quitar observación
-                      </Button>
-                      <AssignRecomendations idObservation={e.id_observation} />
+                    <Grid key={index + "-criterion-" + e.criterion} item xs={6}>
+                      <strong>Criterio:</strong>
+                      {e.criterion}
+                    </Grid>
+                    <Grid key={index + "-cause-" + e.cause} item xs={6}>
+                      <strong>Causa: </strong>
+                      {e.cause}
+                    </Grid>
+                    <Grid key={index + "-effect-" + e.effect} item xs={6}>
+                      <strong>Efecto: </strong>
+                      {e.effect}
                     </Grid>
                   </Grid>
-                );
-              })}
-            </>
-          ) : (
-            <>Sin registros</>
-          )}
-        </Grid>
-      </form>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await axios.delete(
+                            "/observations/" + e.id_observation
+                          );
+                        } catch (error) {
+                          console.error(error);
+                        }
+                      }}
+                      variant="contained"
+                      size="small"
+                      color="error"
+                      fullWidth
+                    >
+                      Quitar observación
+                    </Button>
+                    <AssignRecomendations idObservation={e.id_observation} />
+                  </Grid>
+                </Grid>
+              );
+            })}
+          </>
+        ) : (
+          <>Sin registros</>
+        )}
+      </Grid>
     </>
   );
 };

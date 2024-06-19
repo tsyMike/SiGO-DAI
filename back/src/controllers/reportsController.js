@@ -22,6 +22,13 @@ export class ReportsController {
       }
     res.status(200).json(reports);
   }
+  getAuditableReports = async (req, res) => {
+    const reports = await this.reportsModel.getAuditableReports();
+    if (!reports) {
+        return res.status(404).json({ error: "Reportes no encontrado" }); 
+      }
+    res.status(200).json(reports);
+  }
   createReport = async (req, res) => {
     const { report } = req.body;
     const id = await this.reportsModel.createReport({ report });

@@ -1,14 +1,18 @@
-import { Button, Grid, Modal, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react'
-import DinamicDataTableWithFilter from '../../components/DinamicDataTableWithFilter';
-import { AuditorManagement } from '../../components/expandableRowsComponents';
-import { adminGetAuditorsColumnsFormat } from '../../utils/columns';
-import axios from '../../api/axiosConfig';
-import { AddAuditor } from '../../components/admin-components/users-management/AddAuditor';
+import { useEffect, useState } from "react";
+import axios from "../../api/axiosConfig";
+import DinamicDataTableWithFilter from "../../components/DinamicDataTableWithFilter";
+import { Grid, Typography } from "@mui/material";
+import { AuditorManagement } from "../../components/expandableRowsComponents";
+import { adminGetAuditorsColumnsFormat } from "../../utils/columns";
+import { defaultPieDatasetConfig } from "../../utils/env";
+import { Pie } from "react-chartjs-2";
 
 export const UsersManagement = () => {
   const [auditors, setAuditors] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [chartsData, setChartsData] = useState({
+    totalAuditors: auditors.length,
+    activeAuditors: 0,
+  });
   useEffect(() => {
     const fetchAuditors = async () => {
       try {
@@ -19,42 +23,53 @@ export const UsersManagement = () => {
       }
     };
     fetchAuditors();
+    setChartsData((prev) => {
+      return {
+        ...prev,
+        totalAuditors: auditors.length,
+        activeAuditors: auditors.filter((e) => e.is_active === 1).length,
+      };
+    });
   }, [auditors]);
   return (
     <>
-      <Modal
-        open={openModal}
-        onClose={() => setOpenModal(!openModal)}
-        sx={{ overflow: "auto" }}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-      >
-        <AddAuditor />
-      </Modal>
-      <Grid item xs={1}></Grid>
-      <Grid item xs={7}>
+      <Grid item xs={12}>
         <Typography variant="h4">Gestión de auditores</Typography>
       </Grid>
-      <Grid item xs={4}>
-        <Button
-          onClick={() => setOpenModal(true)}
-          size="small"
-          variant="contained"
-          color="success"
-        >
-          Agregar auditor
-        </Button>
+      <Grid container item xs={3} spacing={2}>
+        <Grid item xs={12}>
+          <strong>Usuarios utilizados</strong>
+          <div>Total: {chartsData.totalAuditors}</div>
+          <Pie
+            data={{
+              labels: ["Activos", "Inactivos"],
+              datasets: [
+                {
+                  label: "Usuarios",
+                  data: [
+                    chartsData.activeAuditors,
+                    chartsData.totalAuditors - chartsData.activeAuditors,
+                  ],
+                  ...defaultPieDatasetConfig,
+                },
+              ],
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          Dash 2
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={9}>
         <DinamicDataTableWithFilter
           data={auditors}
           columnsData={adminGetAuditorsColumnsFormat}
           expandableRowsComponent={AuditorManagement}
           expandableRowsValue={true}
-          title="Auditores registradas"
+          title="Auditores activos"
           filterParam="name"
         />
       </Grid>
     </>
   );
-}
+};

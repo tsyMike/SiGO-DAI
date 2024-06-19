@@ -4,21 +4,23 @@ import {
   Container,
   Grid,
   Stack,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EditIcon from "@mui/icons-material/Edit";
 import RegisterMemorandum from "./admin-components/activities-management/RegisterMemorandum";
 import { ModifiyActivity } from "./admin-components/activities-management/ModifyActivity";
-import { Chart as ChartJS } from "chart.js/auto";
-import { Doughnut } from "react-chartjs-2";
 import axios from "../api/axiosConfig";
 import MemorandumCard from "./user-components/assigned-activity/MemorandumCard";
 import DynamicAssignReports from "./user-components/assigned-activity/DynamicAssignReports";
 import { AllReportsAssigned } from "./user-components/assigned-activity/AllReportsAssigned";
 import { AllObservationsAssigned } from "./user-components/assigned-reports/AllObservationsAssigned";
 import { AssingObservations } from "./user-components/assigned-reports/AssingObservations";
+import { Pie } from "react-chartjs-2";
+import { AddAuditor } from "./admin-components/users-management/AddAuditor";
+import { defaultPieDatasetConfig } from "../utils/env";
+import { formattedDate } from "../utils/formatDate";
+
 export const ActivityManagement = ({ data }) => {
   const { id_activity } = data;
   const [page, setPage] = useState(0);
@@ -57,14 +59,12 @@ export const ActivityManagement = ({ data }) => {
   );
 };
 export const AuditorManagement = ({ data }) => {
-  const { id_user } = data;
-  const containerProps = {
-    sx: { width: "25vw" },
-  };
+  const { id_user, last_name, is_active } = data;
   const [memosAmount, setMemosAmount] = useState({
     restMemos: 0,
     assignedMemos: 0,
   });
+  const [auditorInfo, setAuditorInfo] = useState({});
   useEffect(() => {
     const fetchTotalMemos = async () => {
       try {
@@ -85,47 +85,96 @@ export const AuditorManagement = ({ data }) => {
         console.error(error);
       }
     };
+    const fetchAuditorInfo = async () => {
+      try {
+        const response = await axios.get("/auditors/" + id_user);
+        setAuditorInfo(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchTotalMemos();
-  }, [id_user, memosAmount]);
-  return (
-    <Stack spacing={2} direction="row">
-      <Container {...containerProps}>
-        <Typography variant="h6">Memorandums asignados</Typography>
-        <Doughnut
-          data={{
-            labels: ["Asignados", "Restantes"],
-            datasets: [
-              {
-                label: "Memorandums asignados",
-                data: [memosAmount.assignedMemos, memosAmount.restMemos],
-                backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-                hoverOffset: 0.1,
-              },
-            ],
-          }}
-        />
-      </Container>
-      <Container {...containerProps}>
-        <Typography variant="h6">Actividades asignadas</Typography>
-        <Doughnut
-          data={{
-            labels: ["Red", "Blue", "Yellow"],
-            datasets: [
-              {
-                label: "My First Dataset",
-                data: [300, 50, 100],
-                backgroundColor: [
-                  "rgb(255, 99, 132)",
-                  "rgb(54, 162, 235)",
-                  "rgb(255, 205, 86)",
-                ],
-                hoverOffset: 0.2,
-              },
-            ],
-          }}
-        />
-      </Container>
-    </Stack>
+    fetchAuditorInfo();
+  }, [id_user, auditorInfo, memosAmount]);
+
+  return is_active === 1 ? (
+    <>
+      <p />
+      <Grid spacing={2} container>
+        <Grid container item xs={4}>
+          <Grid item xs={12}>
+            <strong>Información del auditor</strong>
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Profesión</strong>
+          </Grid>
+          <Grid item xs={12}>
+            {auditorInfo.profession}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Experiencia (años)</strong>
+          </Grid>
+          <Grid item xs={6}>
+            Sector público
+          </Grid>
+          <Grid item xs={6}>
+            Sector privado
+          </Grid>
+          <Grid item xs={6}>
+            {auditorInfo.public_years_xp + " año(s)"}
+          </Grid>
+          <Grid item xs={6}>
+            {auditorInfo.private_years_xp + " año(s)"}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Fecha de Incorporación</strong>
+          </Grid>
+          <Grid item xs={12}>
+            {formattedDate(auditorInfo.incorporation_date)}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Remuneración anual</strong>
+            <Grid item xs={12}>
+              {auditorInfo.anual_remuneration}
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={4}>
+          <strong>Memorandums asignados</strong>
+          <Pie
+            data={{
+              labels: ["Asignados", "Restantes"],
+              datasets: [
+                {
+                  label: "Memorandums asignados",
+                  data: [memosAmount.assignedMemos, memosAmount.restMemos],
+                  ...defaultPieDatasetConfig,
+                },
+              ],
+            }}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <strong>Actividades asignadas</strong>
+          <Pie
+            data={{
+              labels: ["Red", "Blue", "Yellow"],
+              datasets: [
+                {
+                  label: "My First Dataset",
+                  data: [300, 50, 100],
+                  ...defaultPieDatasetConfig,
+                },
+              ],
+            }}
+          />
+        </Grid>
+      </Grid>
+    </>
+  ) : (
+    <Container>
+      <AddAuditor daiCharge={last_name} idUser={id_user} />
+    </Container>
   );
 };
 export const ActivityInfo = ({ data }) => {

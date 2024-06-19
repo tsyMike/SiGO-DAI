@@ -1,18 +1,34 @@
-import { IconButton } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
+import { Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "../api/axiosConfig";
-import { formattedDate, updatedFormattedDate } from "./formatDate";
+import { updatedFormattedDate } from "./formatDate";
+// const sortFunction = (a,b) => {
+//   const aJson = jsonDDMMYYDate(a);
+//   const bJson = jsonDDMMYYDate(b);
+//   if (aJson.year === bJson.year) {
+//     if (aJson.month === bJson.month) {
+//       if (aJson.day === bJson.day) {
+//         return 0;
+//       } else return aJson.day < bJson.day ? -1 : 1;
+//     } else {
+//       return aJson.month < bJson.month ? -1 : 1;
+//     }
+//   } else {
+//     return aJson.year < bJson.year ? -1 : 1;
+//   }
+// }
 export const adminGetActivitiesColumnsFormat = [
   {
     name: "Nombre de la actividad",
     selector: (row) => row.activity_name,
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
     name: "Tipo de actividad",
     selector: (row) => row.activity_type_name,
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
     name: "Estado",
@@ -23,7 +39,8 @@ export const adminGetActivitiesColumnsFormat = [
         return "En proceso";
       } else return "Finalizado";
     },
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
     name: "Eliminar",
@@ -47,22 +64,24 @@ export const adminGetActivitiesColumnsFormat = [
 ];
 export const adminGetAuditorsColumnsFormat = [
   {
+    name: "Organigrama",
+    selector: (row) => (row.last_name ? row.last_name : ""),
+    wrap: true,
+    sortable: true,
+  },
+  {
     name: "Nombre del Auditor",
-    selector: (row) => row.last_name + " " + row.name,
-    wrap: "true",
+    selector: (row) => row.name || "S/N asignar",
+    wrap: true,
+    sortable: true,
   },
   {
-    name: "Prefesión del Auditor",
-    selector: (row) => row.profession,
-    wrap: "true",
+    name: "Usuario activo",
+    selector: (row) => (row.is_active === 0 ? "No" : "Si"),
+    sortable: true,
   },
   {
-    name: "Fecha de incorporación",
-    selector: (row) => formattedDate(row.incorporation_date),
-    wrap: "true",
-  },
-  {
-    name: "Eliminar",
+    name: "Desactivar",
     cell: (row) => {
       const { id_user } = row;
       return (
@@ -86,12 +105,14 @@ export const auditorGetActivitiesFormat = [
   {
     name: "Nombre de la actividad",
     selector: (row) => row.activity_name,
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
     name: "Tipo de actividad",
     selector: (row) => row.activity_type_name,
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
     name: "Estado",
@@ -104,17 +125,19 @@ export const auditorGetActivitiesFormat = [
       }
       return "Finalizado";
     },
-    wrap: "true",
+    wrap: true,
+    sortable: true,
   },
   {
-    name: "Eliminar",
+    name: "Finalizar",
     cell: (row) => {
       return (
-        <IconButton
-          disabled={row.finished}
+        <Button
+          color="success"
+          variant="contained"
+          disabled={row.finished === 1}
           onClick={async () => {
             try {
-              console.log(row);
               const response = await axios.get(
                 "/audit-activities/" + row.id_activity
               );
@@ -130,8 +153,8 @@ export const auditorGetActivitiesFormat = [
             }
           }}
         >
-          <DoneIcon color="success" />
-        </IconButton>
+          Finalizar actividad
+        </Button>
       );
     },
   },
@@ -151,7 +174,6 @@ export const auditorGetReportsByActivity = [
                 "/audit-activities/" + row.id_activity
               );
               const { finished } = isFinishedResponse.data;
-              console.log(finished);
               if (finished === 0) {
                 await axios.delete("/reports/" + row.id_report);
               } else {
